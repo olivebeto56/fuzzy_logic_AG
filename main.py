@@ -8,13 +8,16 @@ plt.style.use('ggplot')
 
 mutation = True
 elitism = False
-mutationPorcentage = 0.7
-tournamentPercentage = 0.015
+mutationPorcentage = 0.9
+tournamentPercentage = 0.05
 generations = 100
-nPopulation = 400
+nPopulation = 200
 
 
-chromosomeSize = 12
+fuzzyNetworks = 3
+
+chromosomeSize = fuzzyNetworks*4
+
 weight = 5
 
 
@@ -156,7 +159,7 @@ def mutation(childList):
     participants = random.sample(range(0,nPopulation), int(nPopulation * mutationPorcentage))
     
     for i in participants:
-        cutPoint = random.randint(0, 55)
+        cutPoint = random.randint(0, (chromosomeSize * 8) - 1)
 
         numberIndex = int(cutPoint / 8)
 
@@ -190,6 +193,9 @@ def tournament():
             childList.append(a)
             childList.append(b)
     
+    mutation(childList)
+    mutation(childList)
+    mutation(childList)
     mutation(childList)
 
     if(elitism):
@@ -266,32 +272,71 @@ def live_plotter(x_vec,y1_data, x_vec2, y1_data2,line1, line2,sDistance, identif
     return line1, line2
 
 def getYFuzzy(data_fuzzy, x):
+
+    fuzzyNetworks
+
+    bf = 0
+    af = 0
+    for i in range(fuzzyNetworks):
+        m = data_fuzzy[i*4] 
+        de = data_fuzzy[(i*4)+1] 
+        p = data_fuzzy[(i*4)+2] 
+        q = data_fuzzy[(i*4)+3] 
+        
+        if de == 0:
+            mf = 0
+        else:
+            mf = math.exp((-math.pow((x-m), 2))/(2*math.pow(de, 2)))
+
+        a = mf*(p*x+q)
+
+
+        bf += mf
+        af += a
+
+    y = af/bf
+
+    return y  
+
+
+def getYFuzzyBackup(data_fuzzy, x):
+
     m1 = data_fuzzy[0]
     m2 = data_fuzzy[1]
     m3 = data_fuzzy[2]
-    de1 = data_fuzzy[3]
-    de2 = data_fuzzy[4]
-    de3 = data_fuzzy[5]
-    p1 = data_fuzzy[6]
-    p2 = data_fuzzy[7]
-    p3 = data_fuzzy[8]
-    q1 = data_fuzzy[9]
-    q2 = data_fuzzy[10]
-    q3 = data_fuzzy[11]
+    m4 = data_fuzzy[3]
 
-    if de1 == 0 or de2 == 0 or de3 == 0:
+    de1 = data_fuzzy[4]
+    de2 = data_fuzzy[5]
+    de3 = data_fuzzy[6]
+    de4 = data_fuzzy[7]
+
+    p1 = data_fuzzy[8]
+    p2 = data_fuzzy[9]
+    p3 = data_fuzzy[10]
+    p4 = data_fuzzy[11]
+
+    q1 = data_fuzzy[12]
+    q2 = data_fuzzy[13]
+    q3 = data_fuzzy[14]
+    q4 = data_fuzzy[15]
+
+    if de1 == 0 or de2 == 0 or de3 == 0 or de4 == 0:
         return 0
         
     mf1 = math.exp((-math.pow((x-m1), 2))/(2*math.pow(de1, 2)))
     mf2 = math.exp((-math.pow((x-m2), 2))/(2*math.pow(de2, 2)))
     mf3 = math.exp((-math.pow((x-m3), 2))/(2*math.pow(de3, 2)))
+    mf4 = math.exp((-math.pow((x-m4), 2))/(2*math.pow(de4, 2)))
 
-    bf = mf1+mf2+mf3
+    bf = mf1+mf2+mf3+mf4
 
     a1 = mf1*(p1*x+q1)
     a2 = mf2*(p2*x+q2)
     a3 = mf3*(p3*x+q3)
-    af = a1+a2+a3
+    a4 = mf4*(p4*x+q4)
+
+    af = a1+a2+a3+a4
 
     y = af/bf
 
@@ -311,6 +356,3 @@ if __name__ == "__main__":
 
         tournament()
     input("Press Enter to continue...")
-
-
-
