@@ -8,13 +8,13 @@ plt.style.use('ggplot')
 
 mutation = True
 elitism = False
-mutationPorcentage = 0.9
-tournamentPercentage = 0.05
+mutationPorcentage = 0.90
+tournamentPercentage = 0.02
 generations = 100
-nPopulation = 200
+nPopulation = 400
 
 
-fuzzyNetworks = 3
+fuzzyNetworks = 8
 
 chromosomeSize = fuzzyNetworks*4
 
@@ -195,8 +195,8 @@ def tournament():
     
     mutation(childList)
     mutation(childList)
-    mutation(childList)
-    mutation(childList)
+    # mutation(childList)
+    # mutation(childList)
 
     if(elitism):
 
