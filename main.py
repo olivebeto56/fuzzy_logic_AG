@@ -8,13 +8,13 @@ plt.style.use('ggplot')
 
 mutation = True
 elitism = False
-mutationPorcentage = 0.90
+mutationPorcentage = .90
 tournamentPercentage = 0.02
 generations = 100
 nPopulation = 400
 
 
-fuzzyNetworks = 8
+fuzzyNetworks = 7
 
 chromosomeSize = fuzzyNetworks*4
 
@@ -44,11 +44,12 @@ line1 = []
 line2 = []
 line3 = []
 
-
 def createPopulation():
     for i in range(0, nPopulation):
         chromosome=random.sample(range(0,256), chromosomeSize)
         population.append(chromosome)
+    
+    # population[0] = [193, 34, 248, 32, 99, 155, 0, 255, 58, 6 , 73, 71, 77, 8, 46, 237, 148, 32, 49, 157, 169, 159, 0, 255, 66, 16, 6, 242]
 
 def populateFA(ei):
     fa.clear()
@@ -59,7 +60,6 @@ def populateFA(ei):
 
     plotGraphX = []
     plotGraphY = []
-    chromosomeTemp = []
     sDistance = 999999999999999999999999
 
     for chromosome in population:
@@ -84,7 +84,6 @@ def populateFA(ei):
             sDistance = fa_v
             plotGraphX = plotGraphXTemp
             plotGraphY = plotGraphYTemp
-            # chromosomeTemp = [chromosome[0]/weight] + [chromosome[1]/weight] + [chromosome[2]/weight] + [chromosome[3]/weight] + [chromosome[4]/weight] + [chromosome[5]/weight] + [chromosome[6]/weight]
 
     
     plotDistanceX.append(ei)
@@ -127,7 +126,6 @@ def betterOptions(participants):
     return betterOption
 
 def reproduction(f,m):
-
     cutPoint = random.randint(0, chromosomeSize * 8)
     cutIndex = int(cutPoint / 8)
 
@@ -197,6 +195,10 @@ def tournament():
     mutation(childList)
     # mutation(childList)
     # mutation(childList)
+    # mutation(childList)
+    # mutation(childList)
+    # mutation(childList)
+    # mutation(childList)
 
     if(elitism):
 
@@ -233,7 +235,7 @@ def live_plotter(x_vec,y1_data, x_vec2, y1_data2,line1, line2,sDistance, identif
         fig2 = plt.figure(figsize=(10,5))
         ax2 = fig2.add_subplot(111)
         # create a variable for the line so we can later update it
-        line2, = ax2.plot(y1_data2,x_vec2,'-o',alpha=0.8)
+        line2, = ax2.plot(x_vec2,y1_data2,'-o',alpha=0.8)
         line3, = ax2.plot(xMain,yMain,'-o',alpha=0.8)   
 
     #update plot label/title
@@ -255,7 +257,7 @@ def live_plotter(x_vec,y1_data, x_vec2, y1_data2,line1, line2,sDistance, identif
         ax1.set_ylim([np.min(y1_data)-np.std(y1_data),np.max(y1_data)+np.std(y1_data)])
 
     if np.min(y1_data2)<=line2.axes.get_ylim()[0] or np.max(y1_data2)>=line2.axes.get_ylim()[1]:
-        ax2.set_ylim([np.min(y1_data2)-np.std(y1_data2),np.max(y1_data2)+np.std(y1_data2)])
+        ax2.set_ylim([np.min(yMain)-np.std(yMain),np.max(yMain)+np.std(yMain)])
 
       # adjust limits if new data goes beyond bounds
     if np.min(x_vec)<=line1.axes.get_xlim()[0] or np.max(x_vec)>=line1.axes.get_xlim()[1]:
@@ -271,6 +273,8 @@ def live_plotter(x_vec,y1_data, x_vec2, y1_data2,line1, line2,sDistance, identif
     # return line so we can update it again in the next iteration
     return line1, line2
 
+
+weights = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 def getYFuzzy(data_fuzzy, x):
 
     fuzzyNetworks
@@ -278,7 +282,7 @@ def getYFuzzy(data_fuzzy, x):
     bf = 0
     af = 0
     for i in range(fuzzyNetworks):
-        m = data_fuzzy[i*4] 
+        m = data_fuzzy[i*4]
         de = data_fuzzy[(i*4)+1] 
         p = data_fuzzy[(i*4)+2] 
         q = data_fuzzy[(i*4)+3] 
@@ -290,11 +294,14 @@ def getYFuzzy(data_fuzzy, x):
 
         a = mf*(p*x+q)
 
-
         bf += mf
         af += a
 
-    y = af/bf
+
+    if bf == 0:
+        y = 0
+    else:
+        y = af/bf
 
     return y  
 
@@ -302,23 +309,23 @@ def getYFuzzy(data_fuzzy, x):
 def getYFuzzyBackup(data_fuzzy, x):
 
     m1 = data_fuzzy[0]
-    m2 = data_fuzzy[1]
-    m3 = data_fuzzy[2]
-    m4 = data_fuzzy[3]
+    de1 = data_fuzzy[1]
+    p1 = data_fuzzy[2]
+    q1 = data_fuzzy[3]
 
-    de1 = data_fuzzy[4]
+    m2 = data_fuzzy[4]
     de2 = data_fuzzy[5]
-    de3 = data_fuzzy[6]
-    de4 = data_fuzzy[7]
+    p2 = data_fuzzy[6]
+    q2 = data_fuzzy[7]
 
-    p1 = data_fuzzy[8]
-    p2 = data_fuzzy[9]
+    m3 = data_fuzzy[8]
+    de3 = data_fuzzy[9]
     p3 = data_fuzzy[10]
-    p4 = data_fuzzy[11]
+    q3 = data_fuzzy[11]
 
-    q1 = data_fuzzy[12]
-    q2 = data_fuzzy[13]
-    q3 = data_fuzzy[14]
+    m4 = data_fuzzy[12]
+    de4 = data_fuzzy[13]
+    p4 = data_fuzzy[14]
     q4 = data_fuzzy[15]
 
     if de1 == 0 or de2 == 0 or de3 == 0 or de4 == 0:
